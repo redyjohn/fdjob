@@ -1,0 +1,24 @@
+﻿key,type,說明,example
+id,string,客戶 ID,"""cu_88"""
+name,string,客戶名稱,"""王小明"""
+customName,string,客服命名的客戶名稱,"""王聰明"""
+avatarUrl,string | null,頭像 URL,"""https://...png"""
+email,string | null,email,"""ming@example.com"""
+phone,string | null,電話,"""+886900000000"""
+updatedAt,string(ISO8601),最後更新時間,"""2026-01-19T09:10:00Z"""
+loginAt,string(ISO8601),最後更新時間,"""2026-01-19T09:10:00Z"""
+createdAt,string(ISO8601),建立時間,"""2026-01-18T13:00:00Z"""
+tags,string[],標籤（純字串）,"[""訂單"",""急件""]"
+,,,
+,,,
+"{
+  ""data"": {
+    ""id"": ""string"",
+    ""name"": ""string"",
+    ""role"": ""agent|admin"",
+    ""permissions"": [""string""],
+    ""tags"": [""string""]
+  },
+  ""meta"": {},
+  ""traceId"": ""string""
+}",,,

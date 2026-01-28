@@ -1,0 +1,5 @@
+﻿key,type,說明,example
+page,number,第幾頁（從 1 開始）,1
+pageSize,number,每頁筆數,20
+total,number,總筆數,132
+totalPages,number,總頁數,7

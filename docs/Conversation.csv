@@ -1,0 +1,50 @@
+﻿key,type,說明,example
+id,string,對話 ID,"""c_10001"""
+customer,Customer,客戶資訊,{...}
+channel,"""web"" | ""email"" | ""line"" | ""fb"" | ""ig"" | ""other""",來源渠道,"""web"""
+status,"""open"" | ""pending"" | ""closed""",狀態,"""open"""
+unreadCount,number,未讀數（列表用）,2
+lastMessage,MessageSummary | null,最後一則摘要,{...}
+assignee,Agent | null,指派客服,{...}
+tags,string[],標籤（純字串）,"[""訂單"",""急件""]"
+updatedAt,string(ISO8601),最後更新時間,"""2026-01-19T09:10:00Z"""
+createdAt,string(ISO8601),建立時間,"""2026-01-18T13:00:00Z"""
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+GET /conversations,,,
+key,type,說明,example
+page,number,頁碼,1
+pageSize,number,每頁筆數,20
+q,string,搜尋字（客戶名/內容）,"""訂單"""
+status,“open”|“pending”|“closed”,狀態篩選,"""open"""
+channel,“web”|“email”|“line”|“fb”|“ig”|“other”,渠道,"""web"""
+assigneeId,string,指派客服 ID,"""u_001"""
+unread,boolean,是否只看未讀,TRUE
+sort,“updatedAt_desc”|“updatedAt_asc”,排序,"""updatedAt_desc"""
+updatedAfter,string(ISO8601),更新時間下限,"""2026-01-01T00:00:00Z"""
+,,,
+,,,
+,,,
+,,,
+"{
+  ""data"": [
+    {
+      ""id"": ""string"",
+      ""customer"": { ""id"": ""string"", ""name"": ""string"", ""avatarUrl"": ""string|null"", ""email"": ""string|null"", ""phone"": ""string|null"" },
+      ""channel"": ""web|email|line|fb|ig|other"",
+      ""status"": ""open|pending|closed"",
+      ""unreadCount"": 0,
+      ""lastMessage"": { ""id"": ""string"", ""type"": ""text|file|image|system"", ""text"": ""string"", ""createdAt"": ""string"" },
+      ""assignee"": { ""id"": ""string"", ""name"": ""string"", ""role"": ""agent|admin"" },
+      ""tags"": [""string""],
+      ""updatedAt"": ""string"",
+      ""createdAt"": ""string""
+    }
+  ],
+  ""meta"": { ""page"": 1, ""pageSize"": 20, ""total"": 0, ""totalPages"": 0 },
+  ""traceId"": ""string""
+}",,,

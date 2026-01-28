@@ -1,0 +1,5 @@
+﻿key,type,說明,example
+id,string,訊息 ID,"""m_90001"""
+type,"""text"" | ""file"" | ""image"" | ""system""",訊息類型,"""text"""
+text,string,文字摘要（type=text/system 常用）,"""我想改訂單地址"""
+createdAt,string(ISO8601),建立時間,"""2026-01-19T09:10:00Z"""

@@ -1,0 +1,6 @@
+﻿key,type,說明,example
+fileId,string,檔案 ID,"""f_7788"""
+fileName,string,檔名,"""guide.pdf"""
+mimeType,string | null,MIME 類型,"""application/pdf"""
+size,number | null,檔案大小（bytes）,345678
+url,string | null,下載網址,"""https://cdn.../guide.pdf"""

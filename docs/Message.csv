@@ -1,0 +1,46 @@
+﻿key,type,說明,example
+id,string,訊息 ID,"""m_90002"""
+senderType,"""customer"" | ""agent"" | ""system""",發送者類型,"""agent"""
+senderId,string | null,發送者 ID（agent/customer 才有）,"""u_001"""
+type,"""text"" | ""file"" | ""image"" | ""system""",訊息類型,"""text"""
+text,string | null,文字內容（type=text/system）,"""可以的，請提供訂單編號"""
+attachments,Attachment[],附件列表,[]
+clientMessageId,string | null,前端去重用（送出時帶）,"""tmp_12345"""
+createdAt,string(ISO8601),建立時間,"""2026-01-19T09:12:00Z"""
+readedAt,string(ISO8601),讀取時間,"""2026-01-19T09:12:00Z"""
+,,,
+GET /conversations/{conversationId},,,
+"{
+  ""data"": {
+    ""id"": ""string"",
+    ""status"": ""open|pending|closed"",
+    ""channel"": ""web|email|line|fb|ig|other"",
+    ""customer"": { ""id"": ""string"", ""name"": ""string"", ""avatarUrl"": ""string|null"", ""email"": ""string|null"", ""phone"": ""string|null"" },
+    ""assignee"": { ""id"": ""string"", ""name"": ""string"", ""role"": ""agent|admin"" },
+    ""tags"": [""string""],
+    ""createdAt"": ""string"",
+    ""updatedAt"": ""string""
+  },
+  ""meta"": {},
+  ""traceId"": ""string""
+}",,,
+,,,
+GET /conversations/{conversationId}/messages,,,
+"{
+  ""data"": [
+    {
+      ""id"": ""string"",
+      ""senderType"": ""customer|agent|system"",
+      ""senderId"": ""string|null"",
+      ""type"": ""text|file|image|system"",
+      ""text"": ""string|null"",
+      ""attachments"": [
+        { ""fileId"": ""string"", ""fileName"": ""string"", ""mimeType"": ""string|null"", ""size"": ""number|null"", ""url"": ""string|null"" }
+      ],
+      ""clientMessageId"": ""string|null"",
+      ""createdAt"": ""string""
+    }
+  ],
+  ""meta"": { ""hasMore"": ""boolean"", ""nextBefore"": ""string|null"" },
+  ""traceId"": ""string""
+}",,,

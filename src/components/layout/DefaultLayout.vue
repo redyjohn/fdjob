@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { Ticket, Settings, LogOut } from 'lucide-vue-next'
+import { MessageCircle, Settings, LogOut } from 'lucide-vue-next'
 
 const route = useRoute()
 
 const navItems = [
-  { name: 'Tickets', path: '/tickets', icon: Ticket },
+  { name: 'Conversations', path: '/conversations', icon: MessageCircle },
   { name: 'Settings', path: '/settings', icon: Settings },
 ]
 
@@ -22,7 +22,7 @@ const isActive = (path: string) => {
       <div class="h-16 flex items-center px-6 border-b border-slate-700">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-            <Ticket class="w-5 h-5 text-white" />
+            <MessageCircle class="w-5 h-5 text-white" />
           </div>
           <span class="text-lg font-semibold">Reply System</span>
         </div>
@@ -65,7 +65,7 @@ const isActive = (path: string) => {
 
         <!-- User Info -->
         <div class="flex items-center gap-3">
-          <span class="text-sm text-gray-700 font-medium">Admin</span>
+          <span class="text-sm text-gray-700 font-medium">Agent 001</span>
           <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
             <span class="text-white text-sm font-medium">A</span>
           </div>
