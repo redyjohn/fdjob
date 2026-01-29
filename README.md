@@ -110,6 +110,8 @@ const url = getApiUrl('conversations')  // base + '/conversations'
 | `npm run build` | 型別檢查（`vue-tsc -b`）並建置生產版本至 `dist/` |
 | `npm run preview` | 預覽 `dist/` 建置結果 |
 
+**避免 404**：專案 `base` 為 `/FDjob/`。預覽時請開啟 **`http://localhost:4173/FDjob/`**（勿開 `http://localhost:4173/`）；正式環境請開啟 **`https://redyjohn.github.io/FDjob/`**。若用其他靜態伺服器（如 `npx serve dist`）開根路徑，`config.js` 與 CSS/JS 會 404，請改用 `npm run preview` 或確保伺服器對應至 `/FDjob/`。
+
 ---
 
 ## 交接細節
