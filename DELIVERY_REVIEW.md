@@ -24,7 +24,7 @@
 | 檔案 | 修改內容 |
 |------|----------|
 | `index.html` | **`<title>`** 改為「平台回覆系統」。**`<html lang>`** 改為 `zh-TW`。 |
-| `index.html` | **Favicon** 仍為 `href="/FDjob/vite.svg"`；`public/vite.svg` 存在，build 後於 `dist/vite.svg`，部署於 `/FDjob/` 時路徑正確，無 404。 |
+| `index.html` | **Favicon** 為相對路徑 `href="vite.svg"`（配合 `<base href="/fdjob/">`）；`public/vite.svg` 存在，build 後於 `dist/vite.svg`，部署於 `/fdjob/` 時路徑正確，無 404。 |
 
 ### 2-2. API 配置
 
@@ -80,7 +80,7 @@
 | 項目 | 說明 |
 |------|------|
 | **Favicon** | 目前使用 `public/vite.svg`。若有正式品牌圖示，請替換 `public/vite.svg` 或調整 `index.html` 的 `href`。 |
-| **config.js 載入** | 使用 `base: '/FDjob/'` 且 `config.js` 來自 `public/`。部署至 GitHub Pages 時，請確認 `config.js` 實際可從 `/FDjob/config.js` 取得。 |
+| **config.js 載入** | 使用 `base: '/fdjob/'` 且 `config.js` 來自 `public/`。部署至 GitHub Pages 時，請確認 `config.js` 實際可從 `/fdjob/config.js` 取得。Repository：https://github.com/redyjohn/fdjob。 |
 | **環境變數** | `VITE_API_BASE_URL`、`VITE_WS_URL` 僅作 Fallback；正式環境以 `config.js` 為準。README 已說明。 |
 
 ---

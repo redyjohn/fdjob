@@ -7,6 +7,8 @@
 - **規範來源**：`docs/` 內之 `Conversation.csv`、`Message.csv`、`Customer.csv`、`Attachment.csv`、`Meta.csv`、`MessageSummary.csv`、`API 文件.csv`。
 - **目標**：在無後端環境下，透過 Mock 資料完成完整功能開發；後端就緒後，僅需切換 API 來源與 WebSocket 連線即可對接，無需改動 UI 與業務邏輯層。
 
+**快速開始**：`git clone https://github.com/redyjohn/fdjob.git` → `cd fdjob` → `npm install` → `npm run dev` → 開啟 **http://localhost:5173/fdjob/**。
+
 ---
 
 ## 技術棧（Tech Stack）
@@ -53,7 +55,7 @@
 ### `public/config.js` 的用途
 
 - **執行期設定**：提供 **API Base URL** 與 **WebSocket 地址**，在**不重新打包**的前提下，部署後仍可修改。
-- **載入方式**：`index.html` 以 `<script src="/config.js">` 於頁面載入時引入，寫入 `window.APP_CONFIG`。
+- **載入方式**：`index.html` 設 `<base href="/fdjob/">`，以 `<script src="config.js">` 相對路徑於頁面載入時引入，寫入 `window.APP_CONFIG`。
 - **讀取方式**：`src/utils/config.ts` 的 `getApiBaseUrl()`、`getWebSocketUrl()`、`getApiUrl(endpoint)` **優先**讀取 `window.APP_CONFIG`；若未設定，則 fallback 至 `import.meta.env.VITE_*` 或預設 `localhost`。
 
 ### 如何在不重新打包下更換 API / WebSocket
@@ -106,11 +108,18 @@ const url = getApiUrl('conversations')  // base + '/conversations'
 | 指令 | 說明 |
 |------|------|
 | `npm install` | 安裝依賴 |
-| `npm run dev` | 啟動開發伺服器（預設 `http://localhost:5173`） |
+| `npm run dev` | 啟動開發伺服器；應用位於 `http://localhost:5173/fdjob/` |
 | `npm run build` | 型別檢查（`vue-tsc -b`）並建置生產版本至 `dist/` |
 | `npm run preview` | 預覽 `dist/` 建置結果 |
 
-**避免 404**：專案 `base` 為 `/FDjob/`。預覽時請開啟 **`http://localhost:4173/FDjob/`**（勿開 `http://localhost:4173/`）；正式環境請開啟 **`https://redyjohn.github.io/FDjob/`**。若用其他靜態伺服器（如 `npx serve dist`）開根路徑，`config.js` 與 CSS/JS 會 404，請改用 `npm run preview` 或確保伺服器對應至 `/FDjob/`。
+**避免 404**（`base` 為 `/fdjob/`）：
+
+- **開發**：`npm run dev` 後開啟 **http://localhost:5173/fdjob/**
+- **預覽**：`npm run preview` 後開啟 **http://localhost:4173/fdjob/**（勿開根路徑）
+- **正式**：GitHub Pages 通常為 **https://redyjohn.github.io/fdjob/**
+- **Repository**：[redyjohn/fdjob](https://github.com/redyjohn/fdjob)（clone：`https://github.com/redyjohn/fdjob.git`）
+
+若用 `npx serve dist` 等靜態伺服器開根路徑，`config.js` 與 assets 會 404；請改用 `npm run preview` 或確保伺服器對應至 `/fdjob/`。
 
 ---
 
@@ -176,13 +185,15 @@ docs/                       # CSV API 規範
 
 ## 部署與後端對接
 
-- **GitHub Pages**：Repository `redyjohn/FDjob`，Workflow `.github/workflows/deploy.yml`，push `main` 後自動部署；上線後可透過修改 `config.js` 更換 API/WS 網址。
+- **GitHub Pages**：Repository [redyjohn/fdjob](https://github.com/redyjohn/fdjob)（clone：`https://github.com/redyjohn/fdjob.git`），Workflow `.github/workflows/deploy.yml`，push `main` 後自動部署；上線後可透過修改 `config.js` 更換 API/WS 網址。預覽：**https://redyjohn.github.io/fdjob/**（依 Pages 設定）。
 - **切換真實 API**：View 改為使用 `@/api/conversations` 的 `getConversations`、`getConversation`、`getConversationMessages`、`postMessage`；WebSocket 改為 `getWebSocketUrl()`；上傳改為 FormData POST 至後端上傳端點。
 
 ### 相關文件
 
-- **CLIENT_COMPLIANCE_REPORT.md**：客戶需求清單合規報告（依 CSV 逐項對照）。
-- **COMPLIANCE_CHECKLIST_REPORT.md**：完整檢查清單報告（分類表格、符合度總結、建議修改）。
-- **DELIVERY_REVIEW.md**：交付前程式碼審查與優化紀錄。
+| 文件 | 說明 |
+|------|------|
+| **CLIENT_COMPLIANCE_REPORT.md** | 客戶需求清單合規報告（依 CSV 逐項對照） |
+| **COMPLIANCE_CHECKLIST_REPORT.md** | 完整檢查清單（分類表格、符合度總結、建議修改） |
+| **DELIVERY_REVIEW.md** | 交付前程式碼審查與優化紀錄 |
 
-更多實作細節（功能清單、錯誤處理、clientMessageId、命名規範等）見上述文件與 README 各章節。
+更多實作細節（功能清單、錯誤處理、`clientMessageId`、命名規範等）見上述文件與 README 各章節。

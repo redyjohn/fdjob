@@ -201,7 +201,7 @@
 | 檢查項目 | 對應 CSV/API | 額外要求 | 確認狀態 | 潛在問題 / 建議修改 |
 |----------|--------------|----------|----------|----------------------|
 | build 輸出 static | — | — | **是** | `vite build` → `dist/` 靜態檔。 |
-| 測試站域名 / 路徑 | — | — | **是** | `base: '/FDjob/'`；GitHub Pages 等可對應。 |
+| 測試站域名 / 路徑 | — | — | **是** | `base: '/fdjob/'`；GitHub Pages 等可對應。Repository：https://github.com/redyjohn/fdjob。 |
 
 ### 4-4. 初次提案
 
