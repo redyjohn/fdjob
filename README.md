@@ -192,8 +192,7 @@ docs/                       # CSV API 規範
 
 | 文件 | 說明 |
 |------|------|
-| **CLIENT_COMPLIANCE_REPORT.md** | 客戶需求清單合規報告（依 CSV 逐項對照） |
-| **COMPLIANCE_CHECKLIST_REPORT.md** | 完整檢查清單（分類表格、符合度總結、建議修改） |
+| **COMPLIANCE_CHECKLIST_REPORT.md** | 客戶需求清單合規報告（依 CSV 逐項對照、分類表格、符合度總結、建議修改） |
 | **DELIVERY_REVIEW.md** | 交付前程式碼審查與優化紀錄 |
 
 更多實作細節（功能清單、錯誤處理、`clientMessageId`、命名規範等）見上述文件與 README 各章節。
