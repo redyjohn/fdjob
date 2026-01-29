@@ -34,6 +34,7 @@ export interface ConversationListItemModel {
     avatarUrl: string | null
     email: string | null
     phone: string | null
+    loginAt: string
     tags: string[]
   }
   channel: ConversationChannel

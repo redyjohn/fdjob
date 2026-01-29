@@ -61,6 +61,7 @@ function mapCustomerDTO(dto: CustomerDTO): ConversationListItemModel['customer']
     avatarUrl: dto.avatarUrl,
     email: dto.email,
     phone: dto.phone,
+    loginAt: dto.loginAt,
     tags: dto.tags
   }
 }

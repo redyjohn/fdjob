@@ -417,6 +417,12 @@ export async function markConversationRead(id: string): Promise<boolean> {
   return true
 }
 
+/**
+ * 檔案上傳：完整使用 FormData 封裝，呼叫端以 formData.append('file', file) 傳入。
+ * 對接真實後端時：改為使用 fetch(getApiUrl('api/upload'), { method: 'POST', body: formData })，
+ * 不設 Content-Type（由瀏覽器自動帶 multipart/form-data boundary），
+ * 依後端回傳取得檔案 URL 後再以 attachments 傳入 postMessage。
+ */
 export async function uploadFile(formData: FormData): Promise<string> {
   await delay(800)
   const file = formData.get('file') as File | null
@@ -424,6 +430,11 @@ export async function uploadFile(formData: FormData): Promise<string> {
   const validation = validateFileBeforeUpload(file)
   if (!validation.ok) throw new Error(validation.error)
   const fileName = file.name
+  // Mock：直接回傳模擬 URL。真實對接範例：
+  // const res = await fetch(getApiUrl('api/upload'), { method: 'POST', body: formData })
+  // if (!res.ok) throw new ApiError(await res.text(), res.status, res.headers.get('X-Trace-Id') ?? undefined)
+  // const json = await res.json() as { url: string }
+  // return json.url
   return `https://cdn.example.com/uploads/${Date.now()}_${fileName}`
 }
 
@@ -439,11 +450,30 @@ export function makeAttachmentFromUpload(fileName: string, url: string, mimeType
 }
 
 type MessageCallback = (m: MessageModel) => void
+type GlobalNewMessageCallback = (conversationId: string) => void
 
 export class MockSocketService {
   private intervalId: ReturnType<typeof setInterval> | null = null
   private conversationId: string | null = null
   private callback: MessageCallback | null = null
+  private static globalListeners: GlobalNewMessageCallback[] = []
+
+  /** 訂閱「任一對話收到新訊息」事件，用於列表頁即時更新 unreadCount */
+  static subscribeGlobal(cb: GlobalNewMessageCallback): () => void {
+    MockSocketService.globalListeners.push(cb)
+    return () => {
+      MockSocketService.globalListeners = MockSocketService.globalListeners.filter((l) => l !== cb)
+    }
+  }
+
+  /** 實例方法：委派給靜態 subscribeGlobal */
+  subscribeGlobal(cb: GlobalNewMessageCallback): () => void {
+    return MockSocketService.subscribeGlobal(cb)
+  }
+
+  private static notifyGlobal(conversationId: string) {
+    MockSocketService.globalListeners.forEach((cb) => cb(conversationId))
+  }
 
   connect(conversationId: string, cb: MessageCallback) {
     this.conversationId = conversationId
@@ -476,6 +506,7 @@ export class MockSocketService {
       if (!mockMessagesDTO[cid]) mockMessagesDTO[cid] = []
       mockMessagesDTO[cid].push(dto)
       this.callback(mapMessageDTOToModel(dto))
+      MockSocketService.notifyGlobal(cid)
     }, 10000)
   }
 
@@ -494,5 +525,12 @@ export class MockSocketService {
 }
 
 export const mockSocketService = new MockSocketService()
+
+/** 用於列表 assigneeId 篩選：回傳 Mock 中出現的 assignee 選項 */
+export function getAssigneeOptions(): { id: string; name: string }[] {
+  return [
+    { id: 'u_001', name: '客服小美' }
+  ]
+}
 
 export type { ConversationListItemModel, MessageModel } from './types'

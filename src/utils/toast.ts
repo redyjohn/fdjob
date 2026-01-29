@@ -1,10 +1,11 @@
 /**
  * 簡易錯誤提示（Toast / Alert）
- * 發送失敗、429 等時於 UI 顯示。
+ * 發送失敗、429 等時於 UI 顯示；若 API 回傳 traceId 則一併顯示，方便除錯與日誌追蹤。
  */
 
-export function showError(message: string): void {
-  alert(message)
+export function showError(message: string, traceId?: string): void {
+  const text = traceId ? `${message}\n(traceId: ${traceId})` : message
+  alert(text)
 }
 
 export const RATE_LIMIT_MESSAGE = '請求頻繁，請稍候。'

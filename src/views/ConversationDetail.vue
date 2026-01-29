@@ -11,7 +11,10 @@ import {
   AlertCircle,
   FileText,
   Download,
-  MessageCircle
+  MessageCircle,
+  Mail,
+  Phone,
+  LogIn
 } from 'lucide-vue-next'
 import { createClientMessageId } from '@/api/conversations'
 import {
@@ -26,6 +29,7 @@ import {
   type ConversationListItemModel,
   type MessageModel
 } from '@/api/mocks'
+import { useUnreadStore } from '@/stores/unread'
 import { showError, RATE_LIMIT_MESSAGE } from '@/utils/toast'
 import { validateFileBeforeUpload } from '@/utils/upload'
 import { ApiError } from '@/utils/apiError'
@@ -33,6 +37,7 @@ import { format } from 'date-fns'
 
 const route = useRoute()
 const router = useRouter()
+const unreadStore = useUnreadStore()
 
 const conversation = ref<ConversationListItemModel | null>(null)
 const messages = ref<MessageModel[]>([])
@@ -129,9 +134,12 @@ async function handleSendMessage() {
     )
     if (idx !== -1) messages.value.splice(idx, 1)
     if (e instanceof ApiError && e.isRateLimit) {
-      showError(RATE_LIMIT_MESSAGE)
+      showError(RATE_LIMIT_MESSAGE, e.traceId)
     } else {
-      showError(e instanceof Error ? e.message : '發送失敗，請稍後再試。')
+      showError(
+        e instanceof Error ? e.message : '發送失敗，請稍後再試。',
+        e instanceof ApiError ? e.traceId : undefined
+      )
     }
   } finally {
     isSending.value = false
@@ -194,9 +202,12 @@ async function handleFileChange(event: Event) {
     scrollToBottom()
   } catch (e) {
     if (e instanceof ApiError && e.isRateLimit) {
-      showError(RATE_LIMIT_MESSAGE)
+      showError(RATE_LIMIT_MESSAGE, e.traceId)
     } else {
-      showError(e instanceof Error ? e.message : '檔案上傳失敗，請稍後再試。')
+      showError(
+        e instanceof Error ? e.message : '檔案上傳失敗，請稍後再試。',
+        e instanceof ApiError ? e.traceId : undefined
+      )
     }
   } finally {
     isUploading.value = false
@@ -214,10 +225,13 @@ async function handleStatusChange(event: Event) {
     if (updated) {
       conversation.value.status = updated.status
       conversation.value.updatedAt = updated.updatedAt
-      alert('Status updated!')
+      alert('狀態已更新。')
     }
   } catch (e) {
-    showError(e instanceof Error ? e.message : '狀態更新失敗，請稍後再試。')
+    showError(
+      e instanceof Error ? e.message : '狀態更新失敗，請稍後再試。',
+      e instanceof ApiError ? e.traceId : undefined
+    )
     target.value = conversation.value.status
   } finally {
     isUpdatingStatus.value = false
@@ -226,6 +240,7 @@ async function handleStatusChange(event: Event) {
 
 onMounted(async () => {
   const id = conversationId()
+  unreadStore.clearDelta(id)
   await markConversationRead(id)
   await fetchDetails()
   if (conversation.value) {
@@ -245,7 +260,7 @@ onUnmounted(() => {
   <div v-if="isLoading" class="h-[calc(100vh-64px)] flex items-center justify-center">
     <div class="flex flex-col items-center">
       <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p class="text-gray-500">Loading conversation...</p>
+      <p class="text-gray-500">載入中…</p>
     </div>
   </div>
 
@@ -255,14 +270,14 @@ onUnmounted(() => {
   >
     <div class="text-center">
       <AlertCircle class="w-12 h-12 text-gray-400 mx-auto mb-4" />
-      <h2 class="text-xl font-semibold text-gray-900 mb-2">Conversation Not Found</h2>
-      <p class="text-gray-500 mb-4">The conversation you're looking for doesn't exist.</p>
+      <h2 class="text-xl font-semibold text-gray-900 mb-2">找不到該對話</h2>
+      <p class="text-gray-500 mb-4">此對話不存在或已遭刪除，請返回列表。</p>
       <button
         @click="goBack"
         class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
       >
         <ArrowLeft class="w-4 h-4" />
-        Back to List
+        返回列表
       </button>
     </div>
   </div>
@@ -300,14 +315,15 @@ onUnmounted(() => {
               :disabled="isLoadingMore"
               class="text-sm text-blue-600 hover:underline disabled:opacity-50"
             >
-              {{ isLoadingMore ? 'Loading…' : 'Load older messages' }}
+              {{ isLoadingMore ? '載入中…' : '載入較早訊息' }}
             </button>
           </div>
 
           <div v-if="messages.length === 0" class="h-full flex items-center justify-center">
             <div class="text-center">
               <FileText class="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p class="text-gray-500">No messages yet. Start the conversation!</p>
+              <p class="text-gray-700 font-medium">尚無訊息</p>
+              <p class="text-sm text-gray-500 mt-1">開始回覆以開啟對話。</p>
             </div>
           </div>
 
@@ -485,15 +501,53 @@ onUnmounted(() => {
 
           <div>
             <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
-              Customer
+              客戶資訊卡
             </h3>
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <User class="w-5 h-5 text-blue-600" />
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User class="w-5 h-5 text-blue-600" />
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-gray-900">{{ displayName(conversation) }}</p>
+                  <p class="text-xs text-gray-500">{{ conversation.customer.name }}</p>
+                </div>
               </div>
-              <div>
-                <p class="text-sm font-medium text-gray-900">{{ displayName(conversation) }}</p>
-                <p class="text-xs text-gray-500">{{ conversation.customer.name }}</p>
+              <div class="flex items-center gap-3">
+                <div class="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                  <Hash class="w-4 h-4 text-gray-600" />
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs text-gray-500">ID (Customer.csv)</p>
+                  <p class="text-sm font-medium text-gray-900 truncate">{{ conversation.customer.id }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                  <Mail class="w-4 h-4 text-gray-600" />
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs text-gray-500">email</p>
+                  <p class="text-sm font-medium text-gray-900 truncate">{{ conversation.customer.email || '—' }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                  <Phone class="w-4 h-4 text-gray-600" />
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs text-gray-500">phone</p>
+                  <p class="text-sm font-medium text-gray-900 truncate">{{ conversation.customer.phone || '—' }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                  <LogIn class="w-4 h-4 text-gray-600" />
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs text-gray-500">loginAt</p>
+                  <p class="text-sm font-medium text-gray-900">{{ conversation.customer.loginAt ? formatDate(conversation.customer.loginAt) : '—' }}</p>
+                </div>
               </div>
             </div>
           </div>
